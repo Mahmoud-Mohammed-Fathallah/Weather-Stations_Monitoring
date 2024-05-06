@@ -1,0 +1,47 @@
+# elastic search and kibana [5601,9200] deployment and use the data stored in the persistent volume claim
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elk
+  template:
+    metadata:
+      labels:
+        app: elk
+    spec:
+      containers:
+        - name: elk
+          image: nshou/elasticsearch-kibana
+          ports:
+            - containerPort: 5601
+            - containerPort: 9200
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: ws_storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk
+spec:
+  selector:
+    app: elk
+  ports:
+    - protocol: TCP
+      port: 5601
+      targetPort: 5601
+    - protocol: TCP
+      port: 9200
+      targetPort: 9200

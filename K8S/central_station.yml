@@ -1,0 +1,44 @@
+# central station and use the presistent volume claim
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: central-station
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: central-station
+  template:
+    metadata:
+      labels:
+        app: central-station
+    spec:
+      containers:
+        - name: central-station
+          image: your-image-name
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: ws_storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: central-station
+spec:
+  selector:
+    app: central-station
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,31 @@
+# pv
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /mnt/data
+
+  # pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ws_storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+  selector:
+    matchLabels:
+      app: lbl-zookeeper
