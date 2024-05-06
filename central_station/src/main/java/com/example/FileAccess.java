@@ -14,8 +14,8 @@ import com.google.common.primitives.Ints;
 
 public class FileAccess {
     public static final long sizeThreshold = 500l;
-    public static final String nameFile = "src/main/java/com/example/name.txt";
-    public static final String segmentDir = "src/main/java/com/example/bitcask/storage/";
+    public static final String nameFile = "central_station/src/main/java/com/example/name.txt";
+    public static final String segmentDir = "central_station/src/main/java/com/example/bitcask/storage/";
     public String filePath;
     public File activeFile;
     public FileOutputStream outStream;
@@ -79,7 +79,7 @@ public class FileAccess {
         int key = ByteBuffer.wrap(keyArr).getInt();
         int valSize = ByteBuffer.wrap(valSizeArr).getInt();
         String value = new String(valueArr);
-        return "key: "+key+" -value size:  "+valSize+" -value:"+value;
+        return value;
     }
     // this is for testing purposes only
     // public static void main(String[] args) throws IOException {

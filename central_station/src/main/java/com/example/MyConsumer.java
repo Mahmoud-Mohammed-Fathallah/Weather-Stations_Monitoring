@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+
 public class MyConsumer {
     public static void main(String[] args) throws Exception {
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(
