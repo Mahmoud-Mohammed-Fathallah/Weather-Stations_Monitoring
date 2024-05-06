@@ -133,6 +133,7 @@ public class BitCask {
     public void testing() throws IOException{
         System.out.println(this.readRecordForKey(0));
     }
+// *************************************************************************
     public static void main(String[] args) throws IOException {
         BitCask bc = new BitCask();
         for (int j = 0; j < 10; j++) {
