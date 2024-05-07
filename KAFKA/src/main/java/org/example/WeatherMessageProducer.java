@@ -12,7 +12,7 @@ public class WeatherMessageProducer {
         // Configure Kafka producer properties
         Properties props = new Properties();
 
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  "172.21.0.3:9094");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
@@ -58,8 +58,6 @@ public class WeatherMessageProducer {
             s_no++;
         }
 
-        // Close producer (This will never be reached in this example as we have an infinite loop)
-        // producer.close();
     }
 }
 

@@ -3,8 +3,8 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
-COPY /Project_kafka/out/artifacts/Producerjar/Lab4_kafka.jar /app/
+COPY /out/artifacts/Producer_jar/Producer.jar /app/
 
-CMD ["java", "-jar", "Lab4_kafka.jar"]
+CMD ["java", "-jar", "Producer.jar"]
 
 

@@ -1,3 +1,5 @@
+#this .yml file from website of bitnami image with some modification taken form same website
+
 version: "2"
 
 services:
