@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,10 +26,11 @@ public class BitCask {
     public FileAccess fileAccess;
     public BitCask() throws IOException{
         keyDir = new ConcurrentHashMap<Integer,Pointer>();
-        File f = new File(outputDir+"hintfile");
-        if(f.exists()){
+        File directory = new File(outputDir);
+        String[] names = directory.list();
+        if(names.length!=0){
             System.out.println("recovering from hint file...");
-            recoverFromHintFile(f);
+            recoverFromHintFile(directory);
             System.out.println("recovered from hint file successfully!");
         }else{
             System.out.println("No hint file to recover from, starting from scratch!");
@@ -44,7 +47,7 @@ public class BitCask {
                 }
             }
         };
-        executor.scheduleAtFixedRate(periodicTask, 3, 3, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(periodicTask, 10, 10, TimeUnit.SECONDS);
         // *************************************************************************
         // testing the reading concurrently with compaction process
         ScheduledExecutorService executor2 = Executors.newSingleThreadScheduledExecutor();
@@ -57,36 +60,93 @@ public class BitCask {
                 }
             }
         };
-        executor2.scheduleAtFixedRate(periodicTask2, 3, 3, TimeUnit.SECONDS);
+        executor2.scheduleAtFixedRate(periodicTask2, 1, 1, TimeUnit.SECONDS);
         // *************************************************************************
     }
     
-    public void recoverFromHintFile(File hint) throws IOException {
-        RandomAccessFile raf = new RandomAccessFile(hint, "r");
-        raf.seek(0);
+    public void recoverFromHintFile(File directory) throws IOException {
+        ArrayList<String> hintFiles = new ArrayList<>(),segmentFiles = new ArrayList<>();
+        for(String f : directory.list()){
+            if(f.contains("hint")){
+                hintFiles.add(f);
+            }else if(f.contains("segment")){
+                segmentFiles.add(f);
+            }
+        }
+        Collections.sort(hintFiles,Collections.reverseOrder());
+        Collections.sort(segmentFiles);
         writeLock.lock();
-        while(raf.length()-raf.getFilePointer() >= 16 ){
-            byte[] keyArr = new byte[4];
-            byte[] idArr = new byte[4];
-            byte[] offsetArr = new byte[4];
-            byte[] lengthArr = new byte[4];
-            raf.read(keyArr);
-            raf.read(idArr);
-            raf.read(offsetArr);
-            raf.read(lengthArr);
-            int key = ByteBuffer.wrap(keyArr).getInt();
-            int id = ByteBuffer.wrap(idArr).getInt();
-            int offset = ByteBuffer.wrap(offsetArr).getInt();
-            int length = ByteBuffer.wrap(lengthArr).getInt();
-            this.keyDir.put(key, new Pointer(id, offset, length));
-
+        if(hintFiles.size()>0){
+            String latestHint = hintFiles.get(0);
+            System.out.println("reading file "+latestHint);
+            RandomAccessFile raf = new RandomAccessFile(new File(outputDir+latestHint), "r");
+            raf.seek(0);
+            while(raf.length()-raf.getFilePointer() >= 16 ){
+                byte[] keyArr = new byte[4];
+                byte[] idArr = new byte[4];
+                byte[] offsetArr = new byte[4];
+                byte[] lengthArr = new byte[4];
+                raf.read(keyArr);
+                raf.read(idArr);
+                raf.read(offsetArr);
+                raf.read(lengthArr);
+                int key = ByteBuffer.wrap(keyArr).getInt();
+                int id = ByteBuffer.wrap(idArr).getInt();
+                int offset = ByteBuffer.wrap(offsetArr).getInt();
+                int length = ByteBuffer.wrap(lengthArr).getInt();
+                this.keyDir.put(key, new Pointer(id, offset, length));
+    
+            }
+            raf.close();
+            recoverFromSegments(latestHint,segmentFiles);
+        }else{
+            recoverFromSegments(null,segmentFiles);
         }
         writeLock.unlock();
+
+    }
+
+    private void recoverFromSegments(String latestHint, ArrayList<String> segmentFiles) throws IOException {
+        if(latestHint != null){
+            int hintNum = Integer.parseInt(latestHint.substring(9));
+            for(String s : segmentFiles){
+                int segNum = Integer.parseInt(s.substring(8));
+                if(segNum > hintNum){
+                    System.out.println("reading from file "+s);
+                    recoverFromSegment(s,segNum);
+                }
+            }
+        }else{
+            for(String s : segmentFiles){
+                System.out.println("reading from file "+s);
+                int segNum = Integer.parseInt(s.substring(8));
+                recoverFromSegment(s, segNum);
+            }
+        }
+    }
+
+    private void recoverFromSegment(String fileName,int segNum) throws IOException {
+        String filePath = outputDir+fileName;
+        RandomAccessFile raf = new RandomAccessFile(filePath, "r");
+        int byteOffset = 0;
+        raf.seek(0);
+        while(byteOffset < raf.length()){
+            byte[] keyArr = new byte[4];
+            byte[] valSizeArr = new byte[4];
+            raf.read(keyArr);
+            raf.read(valSizeArr);
+            int key = ByteBuffer.wrap(keyArr).getInt();
+            int valSize = ByteBuffer.wrap(valSizeArr).getInt();
+            byte[] valueArr = new byte[valSize];
+            raf.read(valueArr);
+            this.keyDir.put(key, new Pointer(segNum, byteOffset, byteOffset + 8 + valSize));
+            byteOffset = byteOffset + 8 + valSize;
+        }
         raf.close();
     }
 
-    public static void writeHintFile(ConcurrentHashMap<Integer,Pointer> keyDir) throws IOException{
-        FileOutputStream fos = new FileOutputStream(outputDir+"hintfile",false);
+    public static void writeHintFile(ConcurrentHashMap<Integer,Pointer> keyDir, String fileName) throws IOException{
+        FileOutputStream fos = new FileOutputStream(outputDir+fileName,false);
         for(int k : keyDir.keySet()){
             fos.write(Ints.toByteArray(k));
             Pointer p = keyDir.get(k);
@@ -114,13 +174,17 @@ public class BitCask {
         writeLock.lock();
         int[] offsets = this.fileAccess.writeBytes(key, value);
         this.keyDir.put(key,new Pointer(this.fileAccess.currentSegment,offsets[0],offsets[1]-offsets[0]));
+        // if new active file is made write current keydir to hintfile with number of previous active segment
+        if(offsets[2] == 1){
+            writeHintFile(keyDir, "hintfile-"+(this.fileAccess.currentSegment-1));
+        }
         writeLock.unlock();
 
     }
 
     public void close() throws IOException{
         readLock.lock();
-        writeHintFile(this.keyDir);
+        writeHintFile(this.keyDir,"hintfile-"+this.fileAccess.currentSegment);
         readLock.unlock();
     }
 
@@ -131,22 +195,25 @@ public class BitCask {
 // *************************************************************************
     // this is for testing purposes only
     public void testing() throws IOException{
-        System.out.println(this.readRecordForKey(0));
+        for (int i = 0; i < 10; i++) {
+            // this.writeRecordToActiveFile(i,"this is latest value for key " + i +" the value is "+System.currentTimeMillis());
+            System.out.println(this.readRecordForKey(i));
+        }
     }
 // *************************************************************************
     public static void main(String[] args) throws IOException {
         BitCask bc = new BitCask();
-        for (int j = 0; j < 10; j++) {
-            for (int i = 0; i < 80; i++) {
-                bc.writeRecordToActiveFile(j,"this is latest value for key " + j +" the value is "+i);
-            }
-        }
+        // for (int j = 0; j < 10; j++) {
+        //     for (int i = 0; i < 80; i++) {
+        //         bc.writeRecordToActiveFile(j,"this is latest value for key " + j +" the value is "+i);
+        //     }
+        // }
         
+        // // bc.close();
+        // // System.out.println(bc.keyDir.get(0).ID);
+        // // System.out.println(bc.readRecordForKey(0));
+        // // bc.startCompaction();
         // bc.close();
-        // System.out.println(bc.keyDir.get(0).ID);
-        // System.out.println(bc.readRecordForKey(0));
-        // bc.startCompaction();
-        bc.close();
         
     }
 

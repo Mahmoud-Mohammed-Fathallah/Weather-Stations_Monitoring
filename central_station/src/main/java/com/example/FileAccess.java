@@ -32,9 +32,12 @@ public class FileAccess {
     }
     // function to append the new key value pair to currently active segment
     public int[] writeBytes(int key, String value) throws IOException{
+        int[] offsets = new int[3];
+        offsets[2] = 0;
         if(this.isFull()){
             System.out.println("making new segment to be the current active segment...");
             this.makeNewSegment();
+            offsets[2] = 1;
             System.out.println("file created successfully! file name: segment-"+this.currentSegment);
         }
         byte[] valBytes= value.getBytes();
@@ -42,7 +45,6 @@ public class FileAccess {
         this.outStream.write(Ints.toByteArray(valBytes.length));
         this.outStream.write(valBytes);
         // to return the start offset of the record
-        int[] offsets = new int[2];
         offsets[0] = this.byteOffset;
         this.byteOffset += 8 + valBytes.length;
         offsets[1] = this.byteOffset;

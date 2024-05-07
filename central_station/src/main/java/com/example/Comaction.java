@@ -33,6 +33,7 @@ public class Comaction {
         // getting the name of current active file
         BufferedReader br = new BufferedReader(new FileReader(nameFile));
         this.activeFile =  Integer.parseInt(br.readLine());
+        System.out.println("****** ======>>>>> Active file is:"+activeFile);
         br.close();
         this.keyDir = map;
         this.outStream = new FileOutputStream(new File(segmentDir+"compacted"),false);
@@ -85,13 +86,19 @@ public class Comaction {
         Set<String> fileNames =  Stream.of(dir.listFiles()).filter(file -> !file.isDirectory()).map(File::getName).collect(Collectors.toSet());
         // deleting all files except for active segment and comacted file
         for(String f : fileNames){
-            if(!f.equals("segment-"+this.activeFile) && !f.equals("compacted") && !f.equals("hintfile")){
+            if(f.contains("segment")){
+                int segNum = Integer.parseInt(f.substring(8));
+                if(segNum >= this.activeFile){
+                    continue;
+                }
+            }
+            if(!f.equals("compacted")){
                 new File(segmentDir + f).delete();
             }
         }
         // renaming the comacted file to be segment 0
         new File(segmentDir + "compacted").renameTo(new File(segmentDir+"segment-0"));
-        BitCask.writeHintFile(keyDir);
+        BitCask.writeHintFile(keyDir,"hintfile-0");
         System.out.println("storage updated successfully!!");
         this.writeLock.unlock();
     }
