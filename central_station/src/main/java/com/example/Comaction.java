@@ -26,6 +26,7 @@ public class Comaction {
     public FileOutputStream outStream;
     public int byteOffset;
     public ConcurrentHashMap<Integer,Pointer> keyDir;
+    public ConcurrentHashMap<Integer,Pointer> privateKeyDir;
     public HashMap<Integer,String> mostUpdated;
     public Comaction(ConcurrentHashMap<Integer,Pointer> map,Lock read,Lock write) throws IOException{
         this.readLock = read;
@@ -36,35 +37,33 @@ public class Comaction {
         System.out.println("****** ======>>>>> Active file is:"+activeFile);
         br.close();
         this.keyDir = map;
+        this.privateKeyDir = new ConcurrentHashMap<>();
+        this.privateKeyDir.putAll(map);
         this.outStream = new FileOutputStream(new File(segmentDir+"compacted"),false);
         this.byteOffset = 0;
         this.mostUpdated = new HashMap<>();
     }
     public void compact() throws IOException{
-        this.readLock.lock();
         System.out.println("compaction process starting...");
-        for(Entry<Integer,Pointer>  e : this.keyDir.entrySet()){
+        for(Entry<Integer,Pointer>  e : this.privateKeyDir.entrySet()){
             if(e.getValue().ID >= this.activeFile){
                 continue;
             }
             String mostUpdatedValue = FileAccess.readRecord(e.getValue());
             this.mostUpdated.put(e.getKey(), mostUpdatedValue);
         }
-        this.readLock.unlock();
         this.writeMostUpdated();
         this.outStream.close();
         this.updateStorage();
         System.out.println("finished compaction process successfully!!!");
     }
     private void writeMostUpdated() throws IOException {
-        this.writeLock.lock();
         System.out.println("writing compacted file...");
         for(Entry<Integer,String>  e : this.mostUpdated.entrySet()){
             System.out.println("******** writing record  in file  ");
             int[] offsets = this.writeBytes(e.getKey(), e.getValue());
-            this.keyDir.put(e.getKey(), new Pointer(0, offsets[0], offsets[1]-offsets[0]));
+            this.privateKeyDir.put(e.getKey(), new Pointer(0, offsets[0], offsets[1]-offsets[0]));
         }
-        this.writeLock.unlock();
         System.out.println("finished writing compacted file!");
     }
     public int[] writeBytes(int key, String value) throws IOException{
@@ -82,6 +81,7 @@ public class Comaction {
     public void updateStorage() throws IOException{
         this.writeLock.lock();
         System.out.println("updating storage...");
+        this.keyDir.putAll(this.privateKeyDir);
         File dir = new File(segmentDir);
         Set<String> fileNames =  Stream.of(dir.listFiles()).filter(file -> !file.isDirectory()).map(File::getName).collect(Collectors.toSet());
         // deleting all files except for active segment and comacted file
