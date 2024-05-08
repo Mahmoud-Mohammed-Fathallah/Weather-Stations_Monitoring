@@ -1,0 +1,10 @@
+# Use a lightweight base image with JDK 11
+FROM openjdk:11-jre-slim
+
+WORKDIR /app
+
+COPY /Project_kafka/out/artifacts/Stream_jar/Lab4_kafka.jar /app/stream.jar
+
+CMD ["java", "-jar", "stream.jar"]
+
+
