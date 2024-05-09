@@ -8,7 +8,7 @@ import java.util.*;
 
 public class WeatherMocConsumer {
 
-    private static final String BOOTSTRAP_SERVERS = "localhost:9092";
+    private static final String BOOTSTRAP_SERVERS = System.getenv("bootstrap.servers");
     private static final String TOPIC_NAME = "my_first";
 
     public static void main(String[] args) {

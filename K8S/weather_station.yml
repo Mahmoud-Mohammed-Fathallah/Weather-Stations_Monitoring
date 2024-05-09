@@ -2,25 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: weather_station-producer
+  name: weather-station-producer
 spec:
   selector:
     matchLabels:
-      app: lbl-weather_station-producer
-  replicas: 10
+      app: lbl-weather-station-producer
+  replicas: 1
   template: 
     metadata:
       labels:
-        app: lbl-weather_station-producer
+        app: lbl-weather-station-producer
     spec:
       containers:
-      - name: cont-weather_station-producer
-        image: < image name >
+      - name: cont-weather-station-producer
+        image: weatherstation:latest
         env:
         - name: bootstrap.servers
           value: kafka:9092
         - name: TOPIC
-          value: mytopic       
+          value: station       
         resources:
           limits:
             cpu: "1"
@@ -29,14 +29,13 @@ spec:
             cpu: "0.5"
             memory: "512Mi"
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: Service
 metadata:
-  name: weather_station-producer
-spec:
-  template: 
+  name: weather-station-producer
+spec: 
   selector:
-    app: lbl-weather_station-producer
+    app: lbl-weather-station-producer
   ports:
   - protocol: TCP
     port: 4000

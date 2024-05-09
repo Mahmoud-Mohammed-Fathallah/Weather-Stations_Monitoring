@@ -13,7 +13,7 @@ public class RainDetectorStreamProcessor {
     public static void main(String[] args) {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "message-printer-streams-app");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "172.21.0.3:9094");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("value"));
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 
