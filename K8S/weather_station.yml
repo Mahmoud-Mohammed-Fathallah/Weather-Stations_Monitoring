@@ -16,7 +16,6 @@ spec:
       containers:
       - name: cont-weather-station-producer
         image: weatherstation:latest
-        imagePullPolicy: IfNotPresent
         env:
         - name: bootstrap.servers
           value: kafka:9092

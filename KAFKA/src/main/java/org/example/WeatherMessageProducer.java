@@ -43,7 +43,7 @@ public class WeatherMessageProducer {
 
             // Construct Kafka message
             ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("TOPIC"), "moc-key", jsonMessage);
-
+            
             // Send Kafka message
             producer.send(kafkaMessage, (recordMetadata, e) -> {
                 if (e == null) {
