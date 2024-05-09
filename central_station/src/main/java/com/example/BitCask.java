@@ -47,21 +47,7 @@ public class BitCask {
                 }
             }
         };
-        executor.scheduleAtFixedRate(periodicTask, 10, 10, TimeUnit.SECONDS);
-        // *************************************************************************
-        // testing the reading concurrently with compaction process
-        ScheduledExecutorService executor2 = Executors.newSingleThreadScheduledExecutor();
-        Runnable periodicTask2 = new Runnable() {
-            public void run() {
-                try {
-                    testing();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        executor2.scheduleAtFixedRate(periodicTask2, 1, 1, TimeUnit.SECONDS);
-        // *************************************************************************
+        executor.scheduleAtFixedRate(periodicTask, 120, 120, TimeUnit.SECONDS);
     }
     
     public void recoverFromHintFile(File directory) throws IOException {
@@ -191,30 +177,6 @@ public class BitCask {
     public void startCompaction() throws IOException{
         Comaction c = new Comaction(this.keyDir,readLock,writeLock);
         c.compact();
-    }
-// *************************************************************************
-    // this is for testing purposes only
-    public void testing() throws IOException{
-        for (int i = 0; i < 10; i++) {
-            // this.writeRecordToActiveFile(i,"this is latest value for key " + i +" the value is "+System.currentTimeMillis());
-            System.out.println(this.readRecordForKey(i));
-        }
-    }
-// *************************************************************************
-    public static void main(String[] args) throws IOException {
-        BitCask bc = new BitCask();
-        // for (int j = 0; j < 10; j++) {
-        //     for (int i = 0; i < 80; i++) {
-        //         bc.writeRecordToActiveFile(j,"this is latest value for key " + j +" the value is "+i);
-        //     }
-        // }
-        
-        // // bc.close();
-        // // System.out.println(bc.keyDir.get(0).ID);
-        // // System.out.println(bc.readRecordForKey(0));
-        // // bc.startCompaction();
-        // bc.close();
-        
     }
 
 }

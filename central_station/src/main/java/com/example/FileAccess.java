@@ -8,12 +8,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 
 import com.google.common.primitives.Ints;
 
 public class FileAccess {
-    public static final long sizeThreshold = 500l;
+    // setting threshold to be 500kbytes
+    public static final long sizeThreshold = 500000l;
     public static final String nameFile = "central_station/src/main/java/com/example/name.txt";
     public static final String segmentDir = "central_station/src/main/java/com/example/bitcask/storage/";
     public String filePath;
@@ -78,8 +78,6 @@ public class FileAccess {
         raf.read(valSizeArr);
         raf.read(valueArr);
         raf.close();
-        int key = ByteBuffer.wrap(keyArr).getInt();
-        int valSize = ByteBuffer.wrap(valSizeArr).getInt();
         String value = new String(valueArr);
         return value;
     }
