@@ -1,5 +1,4 @@
 package com.example;
-
 public class Pointer {
     public int ID;
     public int offset;
