@@ -14,8 +14,8 @@ import com.google.common.primitives.Ints;
 public class FileAccess {
     // setting threshold to be 500kbytes
     public static final long sizeThreshold = 500000l;
-    public static final String nameFile = "central_station/src/main/java/com/example/name.txt";
-    public static final String segmentDir = "central_station/src/main/java/com/example/bitcask/storage/";
+    public static final String nameFile = "/data/name.txt";
+    public static final String segmentDir = "/data/bitcask/";
     public String filePath;
     public File activeFile;
     public FileOutputStream outStream;
