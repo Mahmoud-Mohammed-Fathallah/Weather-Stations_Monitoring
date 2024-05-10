@@ -42,6 +42,7 @@ public class CentralStationConsumer {
             }
         }catch (Exception e)
         {
+            bitCask.close();
             consumer.close();
             System.out.println(e);
         }
