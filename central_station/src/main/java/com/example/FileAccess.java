@@ -8,23 +8,33 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 
 import com.google.common.primitives.Ints;
 
 public class FileAccess {
-    public static final long sizeThreshold = 500l;
-    public static final String nameFile = "src/main/java/com/example/name.txt";
-    public static final String segmentDir = "src/main/java/com/example/bitcask/storage/";
+    // setting threshold to be 500kbytes
+    public static final long sizeThreshold = 500000l;
+    public static final String nameFile = "/data/name.txt";
+    public static final String segmentDir = "/data/bitcask/";
     public String filePath;
     public File activeFile;
     public FileOutputStream outStream;
     public int currentSegment;
     public int byteOffset;
     public FileAccess() throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader(nameFile));
-        this.currentSegment = Integer.parseInt(br.readLine());
-        br.close();
+        File f = new File(nameFile);
+        if(f.exists()) { 
+            BufferedReader br = new BufferedReader(new FileReader(nameFile));
+            this.currentSegment = Integer.parseInt(br.readLine());
+            br.close();
+        }else{
+            f.createNewFile();
+            this.currentSegment = 1;
+            BufferedWriter bw = new BufferedWriter(new FileWriter(nameFile));
+            bw.write(String.valueOf(1));
+            bw.close();
+        }
+        
         this.filePath = segmentDir+"segment-"+this.currentSegment;
         this.activeFile = new File(filePath);
         this.byteOffset = (int)activeFile.length();
@@ -32,9 +42,12 @@ public class FileAccess {
     }
     // function to append the new key value pair to currently active segment
     public int[] writeBytes(int key, String value) throws IOException{
+        int[] offsets = new int[3];
+        offsets[2] = 0;
         if(this.isFull()){
             System.out.println("making new segment to be the current active segment...");
             this.makeNewSegment();
+            offsets[2] = 1;
             System.out.println("file created successfully! file name: segment-"+this.currentSegment);
         }
         byte[] valBytes= value.getBytes();
@@ -42,7 +55,6 @@ public class FileAccess {
         this.outStream.write(Ints.toByteArray(valBytes.length));
         this.outStream.write(valBytes);
         // to return the start offset of the record
-        int[] offsets = new int[2];
         offsets[0] = this.byteOffset;
         this.byteOffset += 8 + valBytes.length;
         offsets[1] = this.byteOffset;
@@ -76,10 +88,8 @@ public class FileAccess {
         raf.read(valSizeArr);
         raf.read(valueArr);
         raf.close();
-        int key = ByteBuffer.wrap(keyArr).getInt();
-        int valSize = ByteBuffer.wrap(valSizeArr).getInt();
         String value = new String(valueArr);
-        return "key: "+key+" -value size:  "+valSize+" -value:"+value;
+        return value;
     }
     // this is for testing purposes only
     // public static void main(String[] args) throws IOException {
