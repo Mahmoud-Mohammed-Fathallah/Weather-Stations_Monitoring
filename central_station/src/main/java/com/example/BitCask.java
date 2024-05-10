@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock; 
 
 public class BitCask {
-    public static final String outputDir = "central_station/src/main/java/com/example/bitcask/storage/";
+    public static final String outputDir = "/data/bitcask/";
     public final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(); 
     public final Lock writeLock = readWriteLock.writeLock(); 
     public final Lock readLock = readWriteLock.readLock();
@@ -26,6 +26,9 @@ public class BitCask {
     public FileAccess fileAccess;
     public BitCask() throws IOException{
         keyDir = new ConcurrentHashMap<Integer,Pointer>();
+        if(!new File(outputDir).exists()){
+            new File(outputDir).mkdir();
+        }
         File directory = new File(outputDir);
         String[] names = directory.list();
         if(names.length!=0){
