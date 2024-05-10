@@ -3,8 +3,8 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
-COPY /Project_kafka/out/artifacts/Stream_jar/Lab4_kafka.jar /app/stream.jar
+COPY /target/Streaming.jar /app/
 
-CMD ["java", "-jar", "stream.jar"]
+CMD ["java", "-jar", "Streaming.jar"]
 
 

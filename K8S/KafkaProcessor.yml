@@ -1,38 +1,40 @@
-# weather station is a producer and central station is a consumer
+# kafka streaming processor for triggering
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: weather-station-producer
+  name: stream-processor
 spec:
   selector:
     matchLabels:
-      app: lbl-weather-station-producer
+      app: lbl-stream-processor
   replicas: 1
   template: 
     metadata:
       labels:
-        app: lbl-weather-station-producer
+        app: lbl-stream-processor
     spec:
       containers:
-      - name: weather-station
-        image: weatherstation:latest
+      - name: stream-processor
+        image: kafkastreaming:latest
         imagePullPolicy: Never
         env:
         - name: bootstrap.servers
           value:  kafka-service:9092
         - name: TOPIC
-          value: station       
+          value: station
+        - name: Trigger
+          value: rain         
       
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: weather-station-producer
+  name: stream-processor
 spec:
   selector:
-    app: lbl-weather-station-producer
+    app: lbl-stream-processor
   ports:
     - name: weather-station-producer
-      port: 8080
-      targetPort: 8080
+      port: 9090
+      targetPort: 9090
 

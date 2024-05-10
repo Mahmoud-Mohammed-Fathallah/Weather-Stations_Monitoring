@@ -8,8 +8,8 @@ import java.util.*;
 
 public class WeatherMocConsumer {
 
-    private static final String BOOTSTRAP_SERVERS = System.getenv("bootstrap.servers");
-    private static final String TOPIC_NAME = "my_first";
+    private static final String BOOTSTRAP_SERVERS = "kafka-service:9092";
+    private static final String TOPIC_NAME = "station";
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -44,4 +44,3 @@ public class WeatherMocConsumer {
         }
     }
 }
-

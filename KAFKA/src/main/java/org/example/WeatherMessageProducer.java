@@ -13,9 +13,10 @@ public class WeatherMessageProducer {
         Properties props = new Properties();
 
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  System.getenv("bootstrap.servers"));
+
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
+        System.out.println(props);
         // Create Kafka producer
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
 
@@ -42,8 +43,8 @@ public class WeatherMessageProducer {
             }
 
             // Construct Kafka message
-            ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("TOPIC"), "moc-key", jsonMessage);
-            
+            ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>("station", "moc-key", jsonMessage);
+
             // Send Kafka message
             producer.send(kafkaMessage, (recordMetadata, e) -> {
                 if (e == null) {
@@ -60,4 +61,3 @@ public class WeatherMessageProducer {
 
     }
 }
-

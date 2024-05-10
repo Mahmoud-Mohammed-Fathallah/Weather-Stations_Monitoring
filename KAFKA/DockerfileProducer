@@ -3,7 +3,7 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
-COPY /out/artifacts/Producer_jar/Producer.jar /app/
+COPY /target/Producer.jar /app/
 
 CMD ["java", "-jar", "Producer.jar"]
 

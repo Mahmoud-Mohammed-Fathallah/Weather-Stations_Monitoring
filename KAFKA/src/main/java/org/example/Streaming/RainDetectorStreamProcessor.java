@@ -13,19 +13,19 @@ public class RainDetectorStreamProcessor {
     public static void main(String[] args) {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "message-printer-streams-app");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("value"));
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("bootstrap.servers"));
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 
         StreamsBuilder builder = new StreamsBuilder();
 
         // Consume messages from the input topic
-        KStream<String, String> inputStream = builder.stream("my_first");
+        KStream<String, String> inputStream = builder.stream(System.getenv("TOPIC"));
 
         inputStream.filter((key, value) -> value.contains("\"humidity\":"))
                 .filter((key, value) -> extractHumidity(value) > 70) // Change the condition as needed
                 .mapValues(value -> "High humidity detected-it's raining : " + value) // Create new message
-                .to("Rain", Produced.with(Serdes.String(), Serdes.String()));
+                .to(System.getenv("Trigger"), Produced.with(Serdes.String(), Serdes.String()));
 
         // Print messages to the console
         inputStream.foreach((key, value) -> System.out.println("Received message: " + value));
