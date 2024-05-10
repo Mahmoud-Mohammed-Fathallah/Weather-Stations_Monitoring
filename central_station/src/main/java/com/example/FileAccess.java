@@ -12,8 +12,8 @@ import java.io.RandomAccessFile;
 import com.google.common.primitives.Ints;
 
 public class FileAccess {
-    // setting threshold to be 500kbytes
-    public static final long sizeThreshold = 500000l;
+    // setting threshold to be 50kbytes
+    public static final long sizeThreshold = 50000l;
     public static final String nameFile = "/data/name.txt";
     public static final String segmentDir = "/data/bitcask/";
     public String filePath;

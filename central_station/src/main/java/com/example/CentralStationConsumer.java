@@ -33,7 +33,10 @@ public class CentralStationConsumer {
                     // to access nested object:===> obj.getJSONObject("objectkey")
                     // ex: humidity = weatherjsonObject.getJSONObject("weather").getInt("humidity")
                     int id = WeatherjsonObject.getInt("station_id");
+                    System.out.println("incoming value for id = "+id+" is: "+message);
                     bitCask.writeRecordToActiveFile(id, message);
+                    System.out.println("testing reading from bitcask:");
+                    System.out.println("the latest value for id = "+id +" is: "+bitCask.readRecordForKey(id));
 
                 }
             }
