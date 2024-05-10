@@ -16,8 +16,8 @@ import java.util.concurrent.locks.Lock;
 import com.google.common.primitives.Ints;
 
 public class Comaction {
-    public static final String nameFile = "central_station/src/main/java/com/example/name.txt";
-    public static final String segmentDir = "central_station/src/main/java/com/example/bitcask/storage/";
+    public static final String nameFile = "/data/name.txt";
+    public static final String segmentDir = "/data/bitcask/";
     public Lock readLock;
     public Lock writeLock;
     public int activeFile;
