@@ -22,9 +22,19 @@ public class FileAccess {
     public int currentSegment;
     public int byteOffset;
     public FileAccess() throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader(nameFile));
-        this.currentSegment = Integer.parseInt(br.readLine());
-        br.close();
+        File f = new File(nameFile);
+        if(f.exists()) { 
+            BufferedReader br = new BufferedReader(new FileReader(nameFile));
+            this.currentSegment = Integer.parseInt(br.readLine());
+            br.close();
+        }else{
+            f.createNewFile();
+            this.currentSegment = 1;
+            BufferedWriter bw = new BufferedWriter(new FileWriter(nameFile));
+            bw.write(String.valueOf(1));
+            bw.close();
+        }
+        
         this.filePath = segmentDir+"segment-"+this.currentSegment;
         this.activeFile = new File(filePath);
         this.byteOffset = (int)activeFile.length();
