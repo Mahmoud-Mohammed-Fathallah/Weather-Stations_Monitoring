@@ -1,0 +1,12 @@
+# Use a lightweight base image with JDK 11
+FROM openjdk:16
+
+WORKDIR /app
+
+COPY ./target/Producer-jar-with-dependencies.jar /app/
+
+EXPOSE 9092
+
+CMD ["java", "-jar", "Producer-jar-with-dependencies.jar"]
+
+

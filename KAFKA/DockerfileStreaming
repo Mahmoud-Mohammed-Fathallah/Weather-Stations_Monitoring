@@ -1,0 +1,10 @@
+# Use a lightweight base image with JDK 11
+FROM openjdk:11-jre-slim
+
+WORKDIR /app
+
+COPY /target/Streaming.jar /app/
+
+CMD ["java", "-jar", "Streaming.jar"]
+
+

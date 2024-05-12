@@ -1,0 +1,6 @@
+*.jar
+*.idea
+*/target
+.vscode
+*.tar
+*.class

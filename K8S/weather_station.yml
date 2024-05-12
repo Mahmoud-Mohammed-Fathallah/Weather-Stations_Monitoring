@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-station-producer
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: lbl-weather-station-producer
+  template:
+    metadata:
+      labels:
+        app: lbl-weather-station-producer
+    spec:
+      containers:
+        - name: weather-station
+          image: weater-station:latest
+          imagePullPolicy: Never
+          env:
+            - name: bootstrap.servers
+              value: kafka-service:9092
+            - name: TOPIC
+              value: station
+            - name: STATION_ID
+              value: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather-station-producer
+spec:
+  selector:
+    app: lbl-weather-station-producer
+  ports:
+    - name: weather-station-producer
+      port: 8080
+      targetPort: 8080

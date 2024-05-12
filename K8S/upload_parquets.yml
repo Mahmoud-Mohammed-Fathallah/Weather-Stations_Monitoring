@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upload-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upload-app
+  template:
+    metadata:
+      labels:
+        app: upload-app
+    spec:
+      containers:
+      - name: upload-app
+        image: upload-app
+        ports:
+        - containerPort: 8001
+        imagePullPolicy: Never
+
+        env:
+        - name: ELASTICSEARCH_URL
+          value: "http://elk:9200"
+        - name : ELASTICSEARCH_INDEX
+          value : "weather"
+        - name : DATA_PATH
+          value : "/data/parquet"  
+        volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: ws-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-service
+spec:
+  selector:
+    app: upload-app
+  ports:
+  - protocol: TCP
+    port: 8001
+    targetPort: 8001

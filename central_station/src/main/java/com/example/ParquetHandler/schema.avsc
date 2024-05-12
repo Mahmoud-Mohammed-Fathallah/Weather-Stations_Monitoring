@@ -1,0 +1,43 @@
+{
+  "type": "record",
+  "name": "WeatherData",
+  "fields": [
+    {
+      "name": "id",
+      "type": "long"
+    },
+    {
+      "name": "s_no",
+      "type": "long"
+    },
+    {
+      "name": "battery_status",
+      "type": "string"
+    },
+    {
+      "name": "status_timestamp",
+      "type": "long"
+    },
+    {
+      "name": "weather",
+      "type": {
+        "type": "record",
+        "name": "Weather",
+        "fields": [
+          {
+            "name": "humidity",
+            "type": "int"
+          },
+          {
+            "name": "temperature",
+            "type": "int"
+          },
+          {
+            "name": "wind_speed",
+            "type": "int"
+          }
+        ]
+      }
+    }
+  ]
+}

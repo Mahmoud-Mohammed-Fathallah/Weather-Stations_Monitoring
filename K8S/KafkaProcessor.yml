@@ -1,0 +1,40 @@
+# kafka streaming processor for triggering
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stream-processor
+spec:
+  selector:
+    matchLabels:
+      app: lbl-stream-processor
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        app: lbl-stream-processor
+    spec:
+      containers:
+      - name: stream-processor
+        image: kafkastreaming:latest
+        imagePullPolicy: Never
+        env:
+        - name: bootstrap.servers
+          value:  kafka-service:9092
+        - name: TOPIC
+          value: station
+        - name: Trigger
+          value: rain         
+      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stream-processor
+spec:
+  selector:
+    app: lbl-stream-processor
+  ports:
+    - name: weather-station-producer
+      port: 9090
+      targetPort: 9090
+
