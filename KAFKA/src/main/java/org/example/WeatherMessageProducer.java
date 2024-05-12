@@ -28,7 +28,7 @@ public class WeatherMessageProducer {
             weather target = new weather(rand.nextInt(100), rand.nextInt(100), rand.nextInt(100));
 
             // Create MOC message object
-            MocMessage mocMessage = new MocMessage(1L,s_no, "low",System.currentTimeMillis(), target);
+            MocMessage mocMessage = new MocMessage(Long.parseLong(System.getenv("STATION_ID")),s_no, "low",System.currentTimeMillis(), target);
 
             // Randomly change battery status
             mocMessage.randomlyChangeBatteryStatus();
@@ -43,8 +43,7 @@ public class WeatherMessageProducer {
             }
 
             // Construct Kafka message
-            ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>("station", "moc-key", jsonMessage);
-
+            ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("TOPIC"), "moc-key", jsonMessage);
             // Send Kafka message
             producer.send(kafkaMessage, (recordMetadata, e) -> {
                 if (e == null) {

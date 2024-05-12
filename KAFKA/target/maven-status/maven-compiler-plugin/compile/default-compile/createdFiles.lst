@@ -1,0 +1,5 @@
+org/example/weather.class
+org/example/MocMessage.class
+org/example/WeatherMessageProducer.class
+org/example/Streaming/RainDetectorStreamProcessor.class
+org/example/WeatherMocConsumer.class

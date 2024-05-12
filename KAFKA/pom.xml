@@ -56,7 +56,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>org.example.WeatherMocConsumer</mainClass>
+                            <mainClass>org.example.WeatherMessageProducer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

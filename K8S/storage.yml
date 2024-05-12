@@ -5,11 +5,10 @@ metadata:
   name: my-pv
 spec:
   capacity:
-    storage: 10Gi
+    storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: standard
+  storageClassName: manual
   hostPath:
     path: /mnt/data
 
@@ -18,14 +17,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ws_storage
+  name: ws-storage
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
-  storageClassName: standard
-  selector:
-    matchLabels:
-      app: lbl-zookeeper
+      storage: 1Gi
+  storageClassName: manual

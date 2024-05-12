@@ -4,6 +4,8 @@ import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONObject;
 
+import com.example.BitCaskHandler.BitCask;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
@@ -11,7 +13,7 @@ import java.util.*;
 public class CentralStationConsumer {
 
     private static final String BOOTSTRAP_SERVERS = System.getenv("bootstrap.servers");
-    private static final String TOPIC_NAME = "my_first";
+    private static final String TOPIC_NAME =  System.getenv("TOPIC");
 
     public static void main(String[] args) throws IOException {
         Properties props = new Properties();
@@ -29,16 +31,21 @@ public class CentralStationConsumer {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord<String, String> record : records) {
                     String message = record.value();
+                    System.out.println("Received message: " + message);
                     JSONObject WeatherjsonObject = new JSONObject(message);
+                    System.out.println("WeatherjsonObject: " + WeatherjsonObject);
                     // to access nested object:===> obj.getJSONObject("objectkey")
                     // ex: humidity = weatherjsonObject.getJSONObject("weather").getInt("humidity")
-                    int id = WeatherjsonObject.getInt("station_id");
+                    int id = WeatherjsonObject.getInt("id");
                     bitCask.writeRecordToActiveFile(id, message);
+                    System.out.println("testing reading from bitcask:");
+                    System.out.println("the latest value for id = "+id +" is: "+bitCask.readRecordForKey(id));
 
                 }
             }
         }catch (Exception e)
         {
+            bitCask.close();
             consumer.close();
             System.out.println(e);
         }
