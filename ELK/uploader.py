@@ -1,7 +1,7 @@
 import os
 import time
 import logging
-from fastavro import reader
+import pandas as pd
 from elasticsearch import Elasticsearch
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -14,7 +14,6 @@ es_url = os.getenv('ELASTICSEARCH_URL')
 # Connect to Elasticsearch
 logging.info('Connecting to Elasticsearch')
 
-
 es = None
 while es is None:
     try:
@@ -23,49 +22,44 @@ while es is None:
             es = None
             raise ConnectionError("Could not connect to Elasticsearch. Retrying...")
     except ConnectionError as e:
-        logging.warning(" Retrying in 10 seconds...")
+        logging.warning("Retrying in 10 seconds...")
         time.sleep(10)
 
-# Define the Avro schema
-logging.info('Defining the Avro schema')
-schema = {
-  "type": "record",
-  "name": "WeatherData",
-  "fields": [
-    {"name": "id", "type": "long"},
-    {"name": "s_no", "type": "long"},
-    {"name": "batteryStatus", "type": "string"},
-    {"name": "statusTimestamp", "type": "long"},
-    {
-      "name": "weather",
-      "type": {
-        "type": "record",
-        "name": "weather",
-        "fields": [
-          {"name": "humidity", "type": "int"},
-          {"name": "temperature", "type": "int"},
-          {"name": "windSpeed", "type": "int"}
-        ]
-      }
-    }
-  ]
-}
+# Define the Elasticsearch index
+elasticsearch_index = os.getenv('ELASTICSEARCH_INDEX')
 
 class FileChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if event.src_path.endswith('.parquet'):
             logging.info(f'Modified file detected: {event.src_path}')
             
-            # Read the Avro file
-            logging.info('Reading the Avro file')
-            with open(event.src_path, 'rb') as f:
-                avro_reader = reader(f, reader_schema=schema)
-                records = [record for record in avro_reader]
-            logging.info(f'Read {len(records)} records from the Avro file')
-            # Upload the records to Elasticsearch
-            logging.info('Uploading the records to Elasticsearch')
-            for i, record in enumerate(records):
-                es.index(index=os.getenv('ELASTICSEARCH_INDEX'), id=i, body=record)
+            # Check file size and skip if empty
+            if os.path.getsize(event.src_path) == 0:
+                logging.warning(f'Skipping empty file: {event.src_path}')
+                return
+
+            # Read the Parquet file
+            logging.info('Reading the Parquet file')
+            try:
+                df = pd.read_parquet(event.src_path)
+                logging.info(f'Read {len(df)} records from the Parquet file')
+
+                # Upload the records to Elasticsearch
+                logging.info('Uploading records to Elasticsearch')
+                for index, row in df.iterrows():
+                    record = row.to_dict()
+                    stationid = record.get('id') 
+                    s_no = record.get('s_no') 
+
+                    if stationid is not None and s_no is not None:
+                        # Use stationid and s_no as the Elasticsearch document ID
+                        document_id = f"{stationid}_{s_no}"
+                        es.index(index=elasticsearch_index, id=document_id, body=record)
+                    else:
+                        logging.warning(f"Skipping record with missing 'stationid' or 's_no'")
+
+            except Exception as e:
+                logging.error(f'Error processing file: {event.src_path}, {e}')
 
 # Create an observer
 logging.info('Creating an observer')
@@ -85,4 +79,6 @@ try:
         time.sleep(1)
 except KeyboardInterrupt:
     observer.stop()
+
 observer.join()
+

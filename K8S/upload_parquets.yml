@@ -23,9 +23,9 @@ spec:
         - name: ELASTICSEARCH_URL
           value: "http://elk:9200"
         - name : ELASTICSEARCH_INDEX
-          value : "weather"
+          value : "weatherabdu"
         - name : DATA_PATH
-          value : "/data/parquet"  
+          value : /data/parquet/ 
         volumeMounts:
             - name: data-volume
               mountPath: /data
