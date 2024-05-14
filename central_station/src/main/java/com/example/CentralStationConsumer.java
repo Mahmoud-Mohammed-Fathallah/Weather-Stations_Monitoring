@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.ParquetHandler.ParquetProcessor;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONObject;
@@ -40,6 +41,8 @@ public class CentralStationConsumer {
                     bitCask.writeRecordToActiveFile(id, message);
                     System.out.println("testing reading from bitcask:");
                     System.out.println("the latest value for id = "+id +" is: "+bitCask.readRecordForKey(id));
+                    // archive the record in parquet file
+                    ParquetProcessor.buildParquetFiles(WeatherjsonObject);
 
                 }
             }

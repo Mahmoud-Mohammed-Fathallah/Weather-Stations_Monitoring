@@ -9,5 +9,5 @@ for ((i=1; i<=10; i++)); do
     POD_NAME="weather-station-producer-$STATION_ID"
     
     # Apply the configuration with the current station ID and pod name
-    sed -e "s/STATION_ID_PLACEHOLDER/$STATION_ID/g" -e "s/POD_NAME_PLACEHOLDER/$POD_NAME/g" ten_weather_stations.yml | kubectl delete -f -
+    sed -e "s/STATION_ID_PLACEHOLDER/$STATION_ID/g" -e "s/POD_NAME_PLACEHOLDER/$POD_NAME/g" ten_weather_stations.yml | minikube kubectl -- delete -f -
 done

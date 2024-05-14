@@ -21,7 +21,11 @@ spec:
           - name: bootstrap.servers
             value:  kafka-service:9092
           - name: TOPIC
-            value: station   
+            value: station
+          - name: PARQUET_PATH
+            value: /data
+          - name: BATCH_SIZE
+            value: "100"
           ports:
             - containerPort: 4000
           resources:

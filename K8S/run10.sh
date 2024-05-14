@@ -1,5 +1,8 @@
 #!/bin/bash
-alias kubectl="minikube kubectl --"
+
+
+#!/bin/bash
+
 # Loop to create 10 pods with different station IDs
 for ((i=1; i<=10; i++)); do
     # Set the station ID

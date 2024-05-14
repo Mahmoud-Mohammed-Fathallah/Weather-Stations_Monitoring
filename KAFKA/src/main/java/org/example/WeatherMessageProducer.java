@@ -38,8 +38,20 @@ public class WeatherMessageProducer {
             String jsonMessage = gson.toJson(mocMessage);
             // Randomly drop messages at a 10% rate
             if (rand.nextDouble() < 0.10) {
-                System.out.println("Message dropped: " + jsonMessage);
+                System.out.println("Message dropped shape: " + jsonMessage);
+
+                ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("Dropped"), "moc-key", jsonMessage);
+                // Send Kafka message
+                producer.send(kafkaMessage, (recordMetadata, e) -> {
+                    if (e == null) {
+                        System.out.println("MOC dropped message sent successfully");
+                    } else {
+                        System.err.println("Error sending MOC message: " + e.getMessage());
+                    }
+                });
+
                 continue; // Skip sending this message
+
             }
 
             // Construct Kafka message

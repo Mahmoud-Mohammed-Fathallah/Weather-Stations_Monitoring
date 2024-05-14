@@ -21,6 +21,8 @@ spec:
               value: kafka-service:9092
             - name: TOPIC
               value: station
+            - name: Dropped
+              value: droppedmessage
             - name: STATION_ID
               value: "1"
 ---
