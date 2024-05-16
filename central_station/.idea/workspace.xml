@@ -5,29 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7f823f1-9cc0-4fab-b5af-a69d3cebcfda" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.consumer" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/CentralStationConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/CentralStationConsumer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ParquetHandler/DataProcessor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/BitCask$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/BitCask.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/CentralStationConsumer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/CentralStationConsumer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/Comaction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/FileAccess.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/Pointer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/name.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../K8S/central_station.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../K8S/central_station.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KAFKA/DockerfileConsumer" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KAFKA/DockerfileProducer" beforeDir="false" afterPath="$PROJECT_DIR$/../KAFKA/DockerfileProducer" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KAFKA/DockerfileStreaming" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KAFKA/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../KAFKA/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KAFKA/src/main/java/org/example/Streaming/RainDetectorStreamProcessor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KAFKA/src/main/java/org/example/WeatherMocConsumer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -44,10 +41,25 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;KAFKA&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="central_station" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="central_station" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

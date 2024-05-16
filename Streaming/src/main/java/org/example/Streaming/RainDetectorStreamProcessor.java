@@ -24,7 +24,7 @@ public class RainDetectorStreamProcessor {
 
         inputStream.filter((key, value) -> value.contains("\"humidity\":"))
                 .filter((key, value) -> extractHumidity(value) > 70) // Change the condition as needed
-                .mapValues(value -> "High humidity detected-it's raining : " + value) // Create new message
+                .mapValues(value -> "High humidity detected-it's raining : " + value ) // Create new message
                 .to(System.getenv("Trigger"), Produced.with(Serdes.String(), Serdes.String()));
 
         // Print messages to the console

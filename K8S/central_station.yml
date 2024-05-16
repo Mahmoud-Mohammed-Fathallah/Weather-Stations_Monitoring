@@ -22,6 +22,10 @@ spec:
             value:  kafka-service:9092
           - name: TOPIC
             value: station
+          - name: Trigger
+            value: rain
+          - name: Dropped
+            value: droppedmessage
           - name: PARQUET_PATH
             value: /data
           - name: BATCH_SIZE
