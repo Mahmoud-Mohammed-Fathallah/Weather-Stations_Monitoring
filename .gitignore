@@ -1,2 +1,17 @@
+# Ignore all .jar files
 *.jar
+
+# Ignore all .idea directories recursively
+**/.idea/
+
+# Ignore all target directories recursively
+**/target/
+
+# Ignore all .vscode directories recursively
+**/.vscode/
+
+# Ignore all .tar files
+*.tar
+
+# Ignore all .class files
 *.class
