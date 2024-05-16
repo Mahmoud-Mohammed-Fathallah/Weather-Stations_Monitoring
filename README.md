@@ -105,6 +105,7 @@ This project implements several Enterprise Integration Patterns:
 - `DATA_PATH`: Path to the directory where data files are stored.
 
 
+
 ## kibana results 
 ![](battery_status.gif)
 
