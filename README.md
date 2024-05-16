@@ -109,6 +109,7 @@ This project implements several Enterprise Integration Patterns:
 Logs are written to `app.log` using the `logging` module for .
 ## kibana results 
 ![](Screencast from 05-16-2024 07_05_32 PM.gif)
+
 ![](Screencast from 05-16-2024 07_05_3 PM.gif)
 
 ## Observing File Changes
