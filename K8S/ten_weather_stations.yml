@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: weather-station-producer
+  name: POD_NAME_PLACEHOLDER
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       app: lbl-weather-station-producer
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: weather-station
-          image: weater-station:latest
+          image: weather-station:latest
           imagePullPolicy: Never
           env:
             - name: bootstrap.servers
@@ -24,12 +24,12 @@ spec:
             - name: Dropped
               value: droppedmessage
             - name: STATION_ID
-              value: "1"
+              value: "STATION_ID_PLACEHOLDER"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: weather-station-producer
+  name: POD_NAME_PLACEHOLDER
 spec:
   selector:
     app: lbl-weather-station-producer

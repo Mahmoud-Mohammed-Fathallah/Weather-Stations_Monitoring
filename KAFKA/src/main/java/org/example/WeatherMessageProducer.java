@@ -28,7 +28,7 @@ public class WeatherMessageProducer {
             weather target = new weather(rand.nextInt(100), rand.nextInt(100), rand.nextInt(100));
 
             // Create MOC message object
-            MocMessage mocMessage = new MocMessage(1L,s_no, "low",System.currentTimeMillis(), target);
+            MocMessage mocMessage = new MocMessage(Long.parseLong(System.getenv("STATION_ID")),s_no, "low",System.currentTimeMillis(), target);
 
             // Randomly change battery status
             mocMessage.randomlyChangeBatteryStatus();
@@ -37,14 +37,25 @@ public class WeatherMessageProducer {
             Gson gson = new Gson();
             String jsonMessage = gson.toJson(mocMessage);
             // Randomly drop messages at a 10% rate
-            if (rand.nextDouble() < 0.10) {
-                System.out.println("Message dropped: " + jsonMessage);
+            if ( rand.nextInt(100) < 10) {
+                System.out.println("Message dropped shape: " + jsonMessage);
+
+                ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("Dropped"), "moc-key", jsonMessage);
+                // Send Kafka message
+                producer.send(kafkaMessage, (recordMetadata, e) -> {
+                    if (e == null) {
+                        System.out.println("MOC dropped message sent successfully");
+                    } else {
+                        System.err.println("Error sending MOC message: " + e.getMessage());
+                    }
+                });
+
                 continue; // Skip sending this message
+
             }
 
             // Construct Kafka message
-            ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>("station", "moc-key", jsonMessage);
-
+            ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("TOPIC"), "moc-key", jsonMessage);
             // Send Kafka message
             producer.send(kafkaMessage, (recordMetadata, e) -> {
                 if (e == null) {

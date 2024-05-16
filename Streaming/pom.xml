@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>Producer</artifactId>
+    <artifactId>Streaming</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -37,7 +36,7 @@
 
     </dependencies>
     <build>
-        <finalName> Producer</finalName>
+        <finalName> Streaming</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -56,7 +55,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>org.example.WeatherMessageProducer</mainClass>
+                            <mainClass>org.example.Streaming.RainDetectorStreamProcessor</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -3,8 +3,8 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
-COPY /target/Producer.jar /app/
+COPY /target/Producer-jar-with-dependencies.jar /app/
 
-CMD ["java", "-jar", "Producer.jar"]
+CMD ["java", "-jar", "Producer-jar-with-dependencies.jar"]
 
 

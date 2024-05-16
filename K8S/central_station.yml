@@ -15,9 +15,25 @@ spec:
     spec:
       containers:
         - name: central-station
-          image: your-image-name
+          image: central-station
+          imagePullPolicy: Never
+          env:
+          - name: bootstrap.servers
+            value:  kafka-service:9092
+          - name: ELASTICSEARCH_HOSTS
+            value: elk  
+          - name: TOPIC
+            value: station
+          - name: Trigger
+            value: rain
+          - name: Dropped
+            value: droppedmessage
+          - name: PARQUET_PATH
+            value: /data
+          - name: BATCH_SIZE
+            value: "100"
           ports:
-            - containerPort: 8080
+            - containerPort: 4000
           resources:
             limits:
               cpu: "1"
@@ -28,7 +44,7 @@ spec:
       volumes:
         - name: data-volume
           persistentVolumeClaim:
-            claimName: ws_storage
+            claimName: ws-storage
 
 ---
 apiVersion: v1
@@ -40,5 +56,5 @@ spec:
     app: central-station
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 4000
+      targetPort: 4000
