@@ -37,7 +37,7 @@ public class WeatherMessageProducer {
             Gson gson = new Gson();
             String jsonMessage = gson.toJson(mocMessage);
             // Randomly drop messages at a 10% rate
-            if (rand.nextDouble() < 0.10) {
+            if ( rand.nextInt(100) < 10) {
                 System.out.println("Message dropped shape: " + jsonMessage);
 
                 ProducerRecord<String, String> kafkaMessage = new ProducerRecord<>(System.getenv("Dropped"), "moc-key", jsonMessage);

@@ -64,3 +64,4 @@ spec:
       port: 9200
       targetPort: 9200
       # nodePort: 30006
+

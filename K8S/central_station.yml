@@ -20,6 +20,8 @@ spec:
           env:
           - name: bootstrap.servers
             value:  kafka-service:9092
+          - name: ELASTICSEARCH_HOSTS
+            value: elk  
           - name: TOPIC
             value: station
           - name: Trigger

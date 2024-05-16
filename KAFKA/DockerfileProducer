@@ -5,6 +5,6 @@ WORKDIR /app
 
 COPY /target/Producer-jar-with-dependencies.jar /app/
 
-CMD ["java", "-jar", "Producer-jar-with-dependencies.jars"]
+CMD ["java", "-jar", "Producer-jar-with-dependencies.jar"]
 
 
