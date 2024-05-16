@@ -104,13 +104,11 @@ This project implements several Enterprise Integration Patterns:
 - `ELASTICSEARCH_INDEX`: Name of the Elasticsearch index to store weather data.
 - `DATA_PATH`: Path to the directory where data files are stored.
 
-## Logging
 
-Logs are written to `app.log` using the `logging` module for .
 ## kibana results 
-![](Screencast from 05-16-2024 07_05_32 PM.gif)
+![](battery_status.gif)
 
-![](Screencast from 05-16-2024 07_05_3 PM.gif)
+![](dropped_message.gif)
 
 ## Observing File Changes
 
