@@ -12,12 +12,10 @@ build_producer_jar() {
     mvn clean install package
 }
 
-# Function to build the producer image
-build_producer_image() {
-    echo -e "${GREEN}Building the docker image of the producer${NC}"
-    docker build -t weather-station -f DockerfileProducer .
-    echo -e "${GREEN}Loading the docker image of the producer${NC}"
-    kind load docker-image weather-station --name wsm
+# Function to build the Streaming jar
+build_Streaming_jar() {
+    echo -e "${GREEN}Building the jar of the streaming${NC}"
+    mvn clean install package
 }
 
 # Function to build the central station jar
@@ -26,19 +24,41 @@ build_central_station_jar() {
     mvn clean install package
 }
 
+# Function to build the producer image
+build_producer_image() {
+    echo -e "${GREEN}Building the docker image of the producer${NC}"
+     docker build -t weather-station -f DockerfileProducer .
+    echo -e "${GREEN}Loading the docker image of the producer${NC}"
+   # minikube image load weather-station:latest
+    kind load docker-image weather-station --name wsm
+}
+
+# Function to build the streaming image
+build_streaming_image() {
+    echo -e "${GREEN}Building the docker image of the streaming${NC}"
+     docker build -t kafkastreaming -f DockerfileStreaming .
+    echo -e "${GREEN}Loading the docker image of the streaming${NC}"
+    # minikube image load kafkastreaming:latest
+    kind load docker-image kafkastreaming --name wsm
+}
+
+
+
 # Function to build the central station image
 build_central_station_image() {
     echo -e "${GREEN}Building the docker image of the central station${NC}"
-    docker build -t central-station -f DockerfileConsumer .
+     docker build -t central-station -f DockerfileConsumer .
     echo -e "${GREEN}Loading the docker image of the central station${NC}"
+    # minikube image load central-station:latest
     kind load docker-image central-station --name wsm
 }
 
 # Function to build the uploader image
 build_uploader_image() {
     echo -e "${GREEN}Building the docker image of the uploader${NC}"
-    docker build -t upload-app .
+    sudo docker build -t upload-app .
     echo -e "${GREEN}Loading the docker image of the uploader${NC}"
+    # minikube image load upload-app:latest
     kind load docker-image upload-app --name wsm
 }
 
@@ -52,6 +72,12 @@ up() {
         # Build the central station jar
         cd ../central_station   
         build_central_station_jar
+
+        # Build the Streaming jar
+        cd ../Streaming  
+        build_Streaming_jar
+
+        cd ..
     fi
 
     if [[ "$2" != "nbuild" ]]; then
@@ -64,6 +90,11 @@ up() {
         # Build the uploader image
         cd ../ELK
         build_uploader_image
+
+        # Build the Streaming jar
+        cd ../Streaming  
+        build_streaming_image
+
         cd ..
     fi
 
@@ -72,22 +103,25 @@ up() {
     cd K8S
     # Deploy Kafka
     echo -e "${GREEN}Deploying Kafka${NC}"
-    kubectl apply -f kafka.yml
+     kubectl  apply -f kafka.yml
+    # Deploy Streaming
+    echo -e "${GREEN}Deploying Streaming${NC}"
+     kubectl  apply -f KafkaProcessor.yml
     # Deploy the storage
     echo -e "${GREEN}Deploying the storage${NC}"
-    kubectl apply -f storage.yml
+     kubectl  apply -f storage.yml
     # Deploy ten producers
     echo -e "${GREEN}Deploying the producers${NC}"
     ./run10.sh
     # Deploy the central station
     echo -e "${GREEN}Deploying the central station${NC}"
-    kubectl apply -f central_station.yml
+     kubectl  apply -f central_station.yml
     # Deploy the uploader
     echo -e "${GREEN}Deploying the uploader${NC}"
-    kubectl apply -f upload_parquets.yml
+     kubectl  apply -f upload_parquets.yml
     # Deploy the ELK stack
     echo -e "${GREEN}Deploying the ELK stack${NC}"
-    kubectl apply -f Elk.yml
+     kubectl  apply -f Elk.yml
 }
 
 # Function to bring down the system
@@ -106,6 +140,9 @@ down() {
     # Delete Kafka
     echo -e "${RED}Deleting Kafka${NC}"
     kubectl delete -f kafka.yml
+    # Delete Streaming
+    echo -e "${RED}Deleting Streaming${NC}"
+    kubectl delete -f KafkaProcessor.yml
     # Delete the producers
     echo -e "${RED}Deleting the producers${NC}"
     ./stop10.sh

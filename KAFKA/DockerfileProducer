@@ -1,4 +1,3 @@
-# Use a lightweight base image with JDK 11
 FROM openjdk:16
 
 WORKDIR /app
