@@ -104,11 +104,6 @@ This project implements several Enterprise Integration Patterns:
 - **Optimal Disk Usage**: Compaction process removes outdated entries, maintaining efficient storage.
 - **Reliability**: Ensures quick and reliable recording of data from various weather stations.
 - 
-## Environment Variables
-
-- `ELASTICSEARCH_URL`: URL of the Elasticsearch instance.
-- `ELASTICSEARCH_INDEX`: Name of the Elasticsearch index to store weather data.
-- `DATA_PATH`: Path to the directory where data files are stored in the presistend storage .
 
 
 
