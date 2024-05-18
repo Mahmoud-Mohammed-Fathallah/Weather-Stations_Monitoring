@@ -11,7 +11,9 @@ This project integrates weather data from local weather stations and the Open-Me
 - `central_station/`: Contains the central station consumer code.
 - `ELK/`: Contains the uploader code and Dockerfile for Elasticsearch, Logstash, and Kibana.
 - `K8S/`: Contains Kubernetes deployment files for Kafka, producers, central station, and ELK stack.
--  `Streaming/`: Contains the  processing streaming  code.
+- `Streaming/`: Contains the processing streaming code.
+- `RemoteApi/`: Contains code for integrating with the remote Open-Meteo API.
+- `Logs/`: Directory to store logs.
 - `system.sh`: Shell script to build, deploy, and manage the system.
 
 ## Prerequisites
@@ -42,8 +44,8 @@ This project integrates weather data from local weather stations and the Open-Me
    ```
 
    This script performs the following steps:
-   - Builds the Docker images for the producer, central station, and uploader.
-   - Deploys Kafka, storage, producers, central station, uploader, and the ELK stack to Kubernetes.
+   - Builds the Docker images for the producers, central station, and uploader.
+   - Deploys Kafka, storage, producers,remote api, central station, uploader, and the ELK stack to Kubernetes.
 
 3. Optionally, you can skip building the JARs and Docker images:
 
@@ -71,38 +73,42 @@ This script manages the build and deployment of the system. It supports the foll
 - `up njar nbuild`: Deploys the system without building the JAR files or Docker images.
 - `down`: Shuts down and cleans up the deployed system.
 
-## Docker Images
-
-- **Producer Image**: Built from the `KAFKA/` directory.
-- **Central Station Image**: Built from the `central_station/` directory.
-- **Uploader Image**: Built from the `ELK/` directory.
 
 ## Kubernetes
 
-- **Kafka**: Deploys Kafka using `kafka.yml`.
-- **Storage**: Deploys storage services using `storage.yml`.
-- **Producers**: Deploys multiple producer instances using `run10.sh`.
-- **Central Station**: Deploys the central station consumer using `central_station.yml`.
-- **Uploader**: Deploys the uploader using `upload_parquets.yml`.
-- **ELK Stack**: Deploys Elasticsearch, and Kibana using `Elk.yml`.
+ - `central_station.yml`: Deployment file for central station.
+  - `Elk.yml`: Deployment file for Elasticsearch, Logstash, and Kibana stack.
+  - `KafkaProcessor.yml`: Deployment file for Kafka stream processor.
+  - `kafka.yml`: Deployment file for Kafka.
+  - `meto_station.yml`: Deployment file for meto station.
+  - `run10.sh`: Script to deploy ten producers.
+  - `stop10.sh`: Script to stop ten producers.
+  - `storage.yml`: Deployment file for storage.
+  - `ten_weather_stations.yml`: Deployment file for ten weather stations.
+  - `upload_parquets.yml`: Deployment file for uploader.
+  - `weather_station.yml`: Deployment file for weather station.
 
 ## Integration Patterns
 
 This project implements several Enterprise Integration Patterns:
 
-1. **Polling Consumer**: The producers poll weather data from local stations and the Open-Meteo API.
-2. **Dead-Letter Channel**: Handles failed message processing.
-   ---------------not finshed-------------------------------------------
-4. **Channel Adapter**: Integrates external weather data sources into the Kafka message system.
-5. **Idempotent Receiver**: Ensures that messages are processed exactly once.
-6. **Envelope Wrapper**: Encapsulates messages with metadata for routing and processing.
-7. **Claim Check**: Offloads large message payloads and retains a reference in Kafka messages.
+1. **Polling Consumer**: The central station poll weather data from local stations and the Open-Meteo API.
+2. **Dead-Letter Channel**: Handles failed message processing by putting in another Topic.
+3. **Channel Adapter**: Integrates external weather data sources into the Kafka message system.
+4. **Envelope Wrapper**: Encapsulates messages with metadata for routing and processing.
+   
+### Bitcask Usage in Weather Stations Monitoring Project
 
+- **Efficient Data Storage**: Uses Bitcask's log-structured storage for high-performance write operations.
+- **Quick Data Retrieval**: In-memory index allows for rapid access to historical weather data.
+- **Optimal Disk Usage**: Compaction process removes outdated entries, maintaining efficient storage.
+- **Reliability**: Ensures quick and reliable recording of data from various weather stations.
+- 
 ## Environment Variables
 
 - `ELASTICSEARCH_URL`: URL of the Elasticsearch instance.
 - `ELASTICSEARCH_INDEX`: Name of the Elasticsearch index to store weather data.
-- `DATA_PATH`: Path to the directory where data files are stored.
+- `DATA_PATH`: Path to the directory where data files are stored in the presistend storage .
 
 
 
