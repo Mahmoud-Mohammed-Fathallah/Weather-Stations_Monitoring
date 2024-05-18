@@ -30,7 +30,7 @@ spec:
             value: droppedmessage
           - name: PARQUET_PATH
             value: /data
-          - name: BATCH_SIZE
+          - name: BATCH_SIZE  #the batch used to store parquet files
             value: "100"
           ports:
             - containerPort: 4000
