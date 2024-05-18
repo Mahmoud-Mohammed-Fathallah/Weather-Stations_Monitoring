@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: weather-station-producer
+  name: weather-station-remote
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lbl-weather-station-producer
+      app: lbl-weather-station-remote
   template:
     metadata:
       labels:
-        app: lbl-weather-station-producer
+        app: lbl-weather-station-remote
     spec:
       containers:
-        - name: weather-station
-          image: weater-station:latest
+        - name: meto-station
+          image: meto-station:latest
           imagePullPolicy: Never
           env:
             - name: bootstrap.servers
@@ -24,16 +24,16 @@ spec:
             - name: Dropped
               value: droppedmessage
             - name: STATION_ID
-              value: "1"
+              value: "11"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: weather-station-producer
+  name: weather-station-remote
 spec:
   selector:
-    app: lbl-weather-station-producer
+    app: lbl-weather-station-remote
   ports:
-    - name: weather-station-producer
+    - name: weather-station-remote
       port: 8080
       targetPort: 8080

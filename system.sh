@@ -56,6 +56,16 @@ build_producer_image() {
         kind load docker-image weather-station:latest --name $kind_cluster_name
     fi
 }
+build_remote_image() {
+    echo -e "${GREEN}Building the docker image of the remote api ${NC}"
+     docker build -t meto-station -f DockerfileRemote .
+    echo -e "${GREEN}Loading the docker image of the remote api ${NC}"
+    if [ "$ENV" == "minikube" ]; then
+        minikube image load meto-station:latest
+    elif [ "$ENV" == "kind" ]; then
+        kind load docker-image meto-station:latest --name $kind_cluster_name
+    fi
+}
 
 # Function to build the streaming image
 build_streaming_image() {
@@ -108,6 +118,9 @@ up() {
         cd ../Streaming  
         build_streaming_jar
 
+        cd ../RemoteApi
+        build_producer_jar
+
         cd ..
     fi
 
@@ -125,6 +138,8 @@ up() {
         # Build the Streaming jar
         cd ../Streaming  
         build_streaming_image
+        cd ../RemoteApi
+        build_remote_image
 
         cd ..
     fi
@@ -138,6 +153,10 @@ up() {
     # Deploy Streaming
     echo -e "${GREEN}Deploying Streaming${NC}"
     kubectl apply -f KafkaProcessor.yml
+
+    # Deploy the remote api
+    echo -e "${GREEN}Deploying the remote api${NC}"
+    kubectl apply -f meto_station.yml
     # Deploy the storage
     echo -e "${GREEN}Deploying the storage${NC}"
     kubectl apply -f storage.yml
@@ -174,6 +193,9 @@ down() {
     # Delete Streaming
     echo -e "${RED}Deleting Streaming${NC}"
     kubectl delete -f KafkaProcessor.yml
+    # Delete the remote api
+    echo -e "${RED}Deleting the remote api${NC}"
+    kubectl delete -f meto_station.yml
     # Delete the producers
     echo -e "${RED}Deleting the producers${NC}"
     ./stop10.sh
