@@ -8,5 +8,4 @@ COPY ./target/CentralStationConsumer-jar-with-dependencies.jar /app/
 CMD ["java", "-jar", "CentralStationConsumer-jar-with-dependencies.jar"]
 
 
-CMD ["java", "-XX:StartFlightRecording=name=MyRecording,duration=1m,filename=/app/recording.jfr", "-jar", "/app/CentralStationConsumer-jar-with-dependencies.jar"]
-
+CMD ["java", "-XX:StartFlightRecording=name=MyRecording,duration=1m,settings=profile,filename=/app/recording.jfr", "-jar", "/app/CentralStationConsumer-jar-with-dependencies.jar"]
