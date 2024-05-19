@@ -98,7 +98,7 @@ This project implements several Enterprise Integration Patterns:
 4. **Envelope Wrapper**: Encapsulates messages with metadata for routing and processing.
    
 ### Bitcask Usage in Weather Stations Monitoring Project
-
+  ![](diagrams/diagrams/bitcask-light.png)
 - **Efficient Data Storage**: Uses Bitcask's log-structured storage for high-performance write operations.
 - **Quick Data Retrieval**: In-memory index allows for rapid access to historical weather data.
 - **Optimal Disk Usage**: Compaction process removes outdated entries, maintaining efficient storage.
