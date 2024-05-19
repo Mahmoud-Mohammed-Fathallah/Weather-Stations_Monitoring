@@ -15,7 +15,7 @@ import java.util.concurrent.locks.Lock;
 
 import com.google.common.primitives.Ints;
 
-public class Comaction {
+public class Compaction {
     public static final String nameFile = "/data/name.txt";
     public static final String segmentDir = "/data/bitcask/";
     public Lock readLock;
@@ -26,7 +26,7 @@ public class Comaction {
     public ConcurrentHashMap<Integer,Pointer> keyDir;
     public ConcurrentHashMap<Integer,Pointer> privateKeyDir;
     public HashMap<Integer,String> mostUpdated;
-    public Comaction(ConcurrentHashMap<Integer,Pointer> map,Lock read,Lock write) throws IOException{
+    public Compaction(ConcurrentHashMap<Integer,Pointer> map,Lock read,Lock write) throws IOException{
         this.readLock = read;
         this.writeLock = write;
         // getting the name of current active file
