@@ -178,7 +178,7 @@ public class BitCask {
     }
 
     public void startCompaction() throws IOException{
-        Comaction c = new Comaction(this.keyDir,readLock,writeLock);
+        Compaction c = new Compaction(this.keyDir,readLock,writeLock);
         c.compact();
     }
 
