@@ -2,7 +2,7 @@
 
 This project integrates weather data from local weather stations and the Open-Meteo API, processes the data using Apache Kafka, and stores it in Elasticsearch for analysis. The project includes several components, including producers, consumers, and an uploader that watches for new data files and uploads them to Elasticsearch.
 
-![](FinalProject.gif)
+   <img src="FinalProject.gif" alt="FinalProject" style="width:1000px;"/>
 
 
 ## Project Structure
@@ -121,12 +121,12 @@ This project implements several Enterprise Integration Patterns:
 - **Active File Handling**: Ignores keys in the active file during compaction.
 - **Updating Storage**: Acquires a write lock on keyDir during the update to prevent interruptions.
 - **Hint File**: Writes a new hint file after compaction.
-  ![](diagrams/diagrams/bitcaskModel.gif)
+   ![Bitcask](diagrams/diagrams/bitcaskdark.png)
 - **Efficient Data Storage**: Uses Bitcask's log-structured storage for high-performance write operations.
 - **Quick Data Retrieval**: In-memory index allows for rapid access to historical weather data.
 - **Optimal Disk Usage**: Compaction process removes outdated entries, maintaining efficient storage.
 - **Reliability**: Ensures quick and reliable recording of data from various weather stations.
-- 
+  
 ## Weather Station Mock
 
 ### Weather Station Producer
@@ -135,7 +135,7 @@ This project implements several Enterprise Integration Patterns:
   - Dropped messages: 10%.
   - Battery status: 30% Low, 40% Medium, 30% High.
 - Dead messages are sent to the `droppedmessage` channel for verification in Elasticsearch.
-  - ![Class Diagram of Weather Station Server](WS.png)
+  - ![Class Diagram of Weather Station Server](diagrams/diagrams/producerdark.png)
 
 ### Kafka Streaming Processor
 - Streams messages from the `station` topic in Kafka.
@@ -145,13 +145,18 @@ This project implements several Enterprise Integration Patterns:
 ### Weather Stations
 - 10 weather stations, each sending messages to the Kafka `station` topic and dropped messages to the `droppedmessage` channel.
 - Central station consumes messages from weather stations, updates Bitcask storage with the latest status, archives messages in Parquet files, and handles additional processing.
-
+### Remote API Component
+- Fetches weather data from the Open-Meteo API using a Channel Adapter.
+- The adapter transforms and integrates this external data into the Kafka message system.
+- Ensures consistent ingestion and processing alongside data from local weather stations.
+  - ![Class Diagram of Remote Station Server](diagrams/diagrams/remoteAPIdark.png)
 
 
 ## kibana results 
-![](battery_status.gif)
+   <img src="battery_status.gif" alt="battery_status" style="width:1000px;"/>
 
-![](dropped_message.gif)
+   <img src="dropped_message.gif" alt="dropped_message" style="width:1000px;"/>
+
 
 ## Observing File Changes
 
