@@ -4,7 +4,27 @@ This project integrates weather data from local weather stations and the Open-Me
 
    <img src="FinalProject.gif" alt="FinalProject" style="width:1000px;"/>
 
-
+## Table of Contents
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Setup and Deployment](#setup-and-deployment)
+  - [Build and Deploy the System](#build-and-deploy-the-system)
+  - [Shut Down the System](#shut-down-the-system)
+- [Scripts](#scripts)
+  - [`system.sh`](#systemsh)
+- [Kubernetes](#kubernetes)
+- [Integration Patterns](#integration-patterns)
+- [Bitcask Usage in Weather Stations Monitoring Project](#bitcask-usage-in-weather-stations-monitoring-project)
+  - [Segment Files](#segment-files)
+  - [Hint Files](#hint-files)
+  - [Compaction](#compaction)
+- [Weather Station Mock](#weather-station-mock)
+- [Weather Stations](#weather-stations)
+- [Remote API Component](#remote-api-component)
+- [kibana results](#kibana-results)
+- [Observing File Changes](#observing-file-changes)
+- [Contributing](#contributing)
+- [License](#license)
 ## Project Structure
 
 - `KAFKA/`: Contains the Kafka producer code.
