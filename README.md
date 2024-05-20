@@ -97,13 +97,54 @@ This project implements several Enterprise Integration Patterns:
 3. **Channel Adapter**: Integrates external weather data sources into the Kafka message system.
 4. **Envelope Wrapper**: Encapsulates messages with metadata for routing and processing.
    
-### Bitcask Usage in Weather Stations Monitoring Project
+## Bitcask Usage in Weather Stations Monitoring Project
+
+### Segment Files
+- **Record Structure**: Key is an integer (since we only have 10 stations) and value is the incoming message as a string.
+  - ![image](https://github.com/Mahmoud-Mohammed-Fathallah/Weather-Stations_Monitoring/assets/94381197/cae9e5d6-6179-4eef-a9d1-d1c8c60b3e0f)
+
+- **File Threshold**: Set to 50 KB for testing purposes, enabling quick testing of new segment file creation and compaction.
+- **Segment File Identifiers**: Sequential numbers starting from 0.
+- **Accessing Records**: An in-memory structure (keyDir hashmap) stores the file identifier, byte offset, and record length.
+  - ![image](https://github.com/Mahmoud-Mohammed-Fathallah/Weather-Stations_Monitoring/assets/94381197/b859a433-50e5-48dd-aa6a-e23fcec059f4)
+
+
+### Hint Files
+- **Purpose**: Aid in the rehashing of the keyDir during recovery from a crash, avoiding the need to read all segment files.
+- **Creation**: Generated after each new segment file, containing the keyDir.
+- **Recovery**: Reads the latest hint file and any newer segment files to rebuild the keyDir.
+  -![image](https://github.com/Mahmoud-Mohammed-Fathallah/Weather-Stations_Monitoring/assets/94381197/b693e5f6-8ec1-45a8-9532-1a10f3f4ceac)
+
+
+### Compaction
+- **Process**: A separate thread runs every two minutes, takes a snapshot of the keyDir, and compacts old segment files.
+- **Active File Handling**: Ignores keys in the active file during compaction.
+- **Updating Storage**: Acquires a write lock on keyDir during the update to prevent interruptions.
+- **Hint File**: Writes a new hint file after compaction.
   ![](diagrams/diagrams/bitcaskModel.gif)
 - **Efficient Data Storage**: Uses Bitcask's log-structured storage for high-performance write operations.
 - **Quick Data Retrieval**: In-memory index allows for rapid access to historical weather data.
 - **Optimal Disk Usage**: Compaction process removes outdated entries, maintaining efficient storage.
 - **Reliability**: Ensures quick and reliable recording of data from various weather stations.
 - 
+## Weather Station Mock
+
+### Weather Station Producer
+- Sends weather messages to the Kafka `station` topic.
+- Implements message properties:
+  - Dropped messages: 10%.
+  - Battery status: 30% Low, 40% Medium, 30% High.
+- Dead messages are sent to the `droppedmessage` channel for verification in Elasticsearch.
+  - ![Class Diagram of Weather Station Server](WS.png)
+
+### Kafka Streaming Processor
+- Streams messages from the `station` topic in Kafka.
+- Checks for humidity levels above 70%.
+- Sends warning messages to a new Kafka topic called `rain`.
+
+### Weather Stations
+- 10 weather stations, each sending messages to the Kafka `station` topic and dropped messages to the `droppedmessage` channel.
+- Central station consumes messages from weather stations, updates Bitcask storage with the latest status, archives messages in Parquet files, and handles additional processing.
 
 
 
